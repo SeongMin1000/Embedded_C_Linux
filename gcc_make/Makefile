@@ -29,3 +29,6 @@ clean:
 
 # 자동 의존성 포함
 -include $(OBJS:.o=.d)
+
+# all이나 clean 같은 파일이 존재할 때도 항상 실행되도록 함
+.PHONY: all clean
