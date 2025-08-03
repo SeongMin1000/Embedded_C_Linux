@@ -1,3 +1,6 @@
-advancde_c/*.exe
-.vscode/
-*.txt
+./vscode
+**/*.txt
+
+# 모든 실행 파일 무시
+**/*.exe
+**/*[!.]*
