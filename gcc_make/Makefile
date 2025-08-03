@@ -1,34 +1,41 @@
-# 컴파일러 지정
+# 디렉토리 설정
+SRC_DIR = src
+INC_DIR = include
+BUILD_DIR = build
+
+# 컴파일러 및 플래그
 CC = gcc
+CFLAGS = -Wall -g -MMD -MP -I$(INC_DIR)
 
-# -MMD: .d 파일 생성
-# -MP: 삭제된 헤더로 인한 오류 방지용 dummy 타겟 추가
-CFLAGS = -Wall -g -MMD -MP
+# 소스 및 오브젝트 파일
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
+DEPS = $(OBJS:.o=.d)
 
-# 타겟 이름
+# 최종 실행 파일
 TARGET = main
 
-# 소스 및 오브젝트 파일 목록
-SRCS = main.c add.c
-OBJS = $(SRCS:.c=.o)
-
-# 기본 빌드 규칙
+# 빌드
 all: $(TARGET)
 
+# 타겟 빌드(링크)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
+# 컴파일 (소스 -> 오브젝트)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# 개별 .c -> .o 규칙
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
+# 전체 재빌드
+rebuild: clean all
 
-# 정리 규칙
+# 클린
 clean:
 	rm -f $(OBJS) $(TARGET) $(OBJS:.o=.d)
 
-# 자동 의존성 포함
--include $(OBJS:.o=.d)
+# 의존성 포함
+-include $(DEPS)
 
-# all이나 clean 같은 파일이 존재할 때도 항상 실행되도록 함
-.PHONY: all clean
+# 항상 실행해야 하는 가짜 타겟들 선언
+.PHONY: all rebuild clean
