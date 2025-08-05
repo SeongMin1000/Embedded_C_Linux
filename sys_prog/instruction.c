@@ -1,4 +1,4 @@
-// ex) ls
+// ex) free -h
 
 #include <stdio.h>
 #include <stdlib.h>
